@@ -1,0 +1,1110 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Configurateur de façade</title>
+  <style>
+    :root{
+      --bg0:#070b14;
+      --bg1:#0b1220;
+      --panel:#0f1a2e;
+      --card:#111f37;
+      --muted:#9bb0d1;
+      --text:#eaf1ff;
+      --line:rgba(255,255,255,.10);
+      --line2:rgba(255,255,255,.16);
+      --accent:#7aa7ff;
+      --accent2:#9ef0ff;
+      --danger:#ff6b6b;
+      --radius:16px;
+      --shadow: 0 18px 50px rgba(0,0,0,.38);
+      --shadow2: 0 10px 24px rgba(0,0,0,.28);
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      padding:18px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1100px 700px at 20% 0%, #14336a 0%, var(--bg1) 55%),
+        radial-gradient(900px 600px at 90% 10%, rgba(122,167,255,.18) 0%, transparent 60%),
+        radial-gradient(900px 600px at 30% 90%, rgba(158,240,255,.10) 0%, transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      color:var(--text);
+    }
+
+    /* Header */
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:14px 16px;
+      border:1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(10px);
+      margin-bottom: 14px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width: 0;
+    }
+    .logo{
+      width:40px; height:40px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(122,167,255,.55), rgba(158,240,255,.25));
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow: 0 10px 22px rgba(0,0,0,.25);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900;
+    }
+    .titleWrap{ min-width: 0; }
+    h1{
+      margin:0;
+      font-size:18px;
+      letter-spacing:.2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .sub{
+      color:var(--muted);
+      font-size:12.5px;
+      margin-top:3px;
+      line-height:1.35;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .topActions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    /* Layout */
+    .layout{
+      display:grid;
+      grid-template-columns: 430px 1fr;
+      gap:16px;
+      align-items:start;
+    }
+    @media (max-width: 1100px){
+      .layout{ grid-template-columns: 1fr; }
+      .controlsSticky{ position: static !important; }
+      #svgBox{ height: 560px !important; }
+    }
+
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
+    }
+    .panelHeader{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+    }
+    .panelHeader .hTitle{
+      font-weight:800;
+      font-size:14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .panelHeader .hMeta{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:4px;
+      line-height:1.35;
+    }
+    .panelBody{ padding:14px; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .grid3{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:10px;
+    }
+    .field{
+      display:flex; flex-direction:column; gap:6px;
+      min-width:0;
+    }
+    .label{
+      font-size:12px;
+      color:var(--muted);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+    .label .hint{ font-size:11px; opacity:.9; }
+
+    select, input{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line2);
+      background: rgba(0,0,0,.22);
+      color:var(--text);
+      outline:none;
+    }
+    select:focus, input:focus{
+      border-color: rgba(122,167,255,.8);
+      box-shadow: 0 0 0 3px rgba(122,167,255,.18);
+    }
+
+    .divider{
+      height:1px;
+      background: linear-gradient(90deg, transparent, var(--line), transparent);
+      margin: 12px 0;
+    }
+
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:12px;
+      align-items:center;
+    }
+
+    button{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line2);
+      color: var(--text);
+      cursor:pointer;
+      font-weight:700;
+      letter-spacing:.2px;
+      background: rgba(255,255,255,.05);
+    }
+    button:hover{ filter:brightness(1.08); }
+
+    .btnPrimary{
+      background: linear-gradient(180deg, rgba(122,167,255,.34), rgba(122,167,255,.14));
+      border-color: rgba(122,167,255,.45);
+    }
+    .btnGhost{
+      background: rgba(255,255,255,.05);
+    }
+
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    .listWrap{
+      margin-top:12px;
+      border-top:1px solid var(--line);
+      padding-top:12px;
+    }
+    ol{
+      margin:10px 0 0;
+      padding-left: 18px;
+      color: var(--text);
+      max-height: 30vh;
+      overflow:auto;
+    }
+    li{
+      margin:8px 0;
+      cursor:pointer;
+      padding:10px 10px;
+      border-radius:12px;
+      background: rgba(255,255,255,.03);
+      border:1px solid transparent;
+    }
+    li:hover{
+      border-color: rgba(122,167,255,.40);
+      background: rgba(122,167,255,.08);
+    }
+
+    /* Sticky controls */
+    .controlsSticky{
+      position: sticky;
+      top: 18px;
+    }
+
+    /* Preview */
+    .canvas{
+      padding:12px;
+    }
+    #svgBox{
+      border-radius: var(--radius);
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      overflow:auto;
+      height: calc(100vh - 130px);
+      min-height: 560px;
+    }
+    #plan{
+      display:block;
+      width:100%;
+      height:100%;
+    }
+    .footerNote{
+      margin-top:10px;
+      color: var(--muted);
+      font-size:12px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">F</div>
+      <div class="titleWrap">
+        <h1>Plan de façade</h1>
+        <div class="sub">Ajoute des éléments de gauche à droite • Cotes auto • Export PDF</div>
+      </div>
+    </div>
+
+    <div class="topActions">
+      <button class="btnPrimary" id="downloadPdfTop">📄 Export PDF</button>
+      <span class="pill" id="summaryPill">0 élément • 0 cm</span>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- CONTROLS -->
+    <div class="panel controlsSticky">
+      <div class="panelHeader">
+        <div class="hTitle">
+          <span>Configurer</span>
+          <span class="pill" id="hintPill">🖱️ clic = supprimer</span>
+        </div>
+        <div class="hMeta">
+          Astuce : pour un portillon/portail, mets la largeur réelle entre piliers.
+        </div>
+      </div>
+
+      <div class="panelBody">
+        <div class="grid">
+          <div class="field">
+            <div class="label">Élément</div>
+            <select id="type">
+              <option value="pillar">Pilier</option>
+              <option value="wicket">Portillon</option>
+              <option value="fence">Clôture sur muret</option>
+              <option value="gate">Portail</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <div class="label">Largeur (cm)</div>
+            <input id="w" type="number" value="40" min="1" />
+          </div>
+
+          <div class="field">
+            <div class="label">Hauteur totale (cm)</div>
+            <input id="h" type="number" value="180" min="1" />
+          </div>
+
+          <div class="field" id="wallHLabel">
+            <div class="label">Hauteur muret (cm)</div>
+            <input id="wallH" type="number" value="100" min="0" />
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="grid3">
+          <div class="field" id="slatsLabel">
+            <div class="label">Lames</div>
+            <select id="slats">
+              <option value="horizontal">Horizontales</option>
+              <option value="vertical">Verticales</option>
+            </select>
+          </div>
+
+          <div class="field" id="slatThicknessLabel">
+            <div class="label">Épaisseur (cm) <span class="hint">ex: 12</span></div>
+            <input id="slatThicknessCm" type="number" value="12" min="4" step="1" />
+          </div>
+
+          <div class="field" id="handleSideLabel">
+            <div class="label">Poignée</div>
+            <select id="handleSide">
+              <option value="right">À droite</option>
+              <option value="left">À gauche</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="grid">
+          <div class="field" id="gateKindLabel">
+            <div class="label">Type de portail</div>
+            <select id="gateKind">
+              <option value="sliding">Coulissant</option>
+              <option value="swing">Battant (2 vantaux, sans écart)</option>
+            </select>
+          </div>
+
+          <div class="field" id="postSpacingLabel">
+            <div class="label">Poteaux clôture (m)</div>
+            <input id="postSpacingM" type="number" value="2" min="0.5" step="0.5" />
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="grid">
+          <div class="field" id="backgroundStyleLabel">
+            <div class="label">Fond</div>
+            <select id="backgroundStyle">
+              <option value="neutral">Neutre</option>
+              <option value="house">Maison réaliste</option>
+            </select>
+          </div>
+
+          <div class="field" id="houseColorLabel">
+            <div class="label">Couleur maison</div>
+            <select id="houseColor">
+              <option value="blanc_casse">Blanc cassé</option>
+              <option value="ton_pierre">Ton pierre</option>
+              <option value="saumon">Saumon</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="grid">
+          <div class="field" id="masonryColorLabel">
+            <div class="label">Piliers / muret</div>
+            <select id="masonryColor">
+              <option value="blanc_casse">Blanc cassé</option>
+              <option value="ton_pierre">Ton pierre</option>
+            </select>
+          </div>
+
+          <div class="field" id="metalColorLabel">
+            <div class="label">Menuiserie</div>
+            <select id="metalColor">
+              <option value="anthracite">Gris anthracite</option>
+              <option value="blanc">Blanc</option>
+              <option value="noir">Noir</option>
+              <option value="gris_clair">Gris clair</option>
+              <option value="marron">Marron</option>
+              <option value="vert">Vert</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btnPrimary" id="add">➕ Ajouter</button>
+          <button class="btnGhost" id="downloadPdf">📄 PDF</button>
+          <button class="btnGhost" id="reset">↺ Réinitialiser</button>
+        </div>
+
+        <div class="listWrap">
+          <div style="font-weight:800; font-size:14px;">Éléments</div>
+          <ol id="list"></ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- CANVAS -->
+    <div class="panel canvas">
+      <div id="svgBox">
+        <svg id="plan" viewBox="0 0 1500 560" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div class="footerNote">Cotes en centimètres. Échelle automatique : le dessin s’adapte à la largeur totale.</div>
+    </div>
+  </div>
+
+<script>
+/** =========================
+ *  Palette
+ *  ========================= */
+const COLORS = {
+  masonry: {
+    "blanc_casse": { base:"#f0ede6", cap:"#e5dccb", stroke:"#b9ac97" },
+    "ton_pierre":  { base:"#d6c5a6", cap:"#c8b28d", stroke:"#9b845f" }
+  },
+  house: {
+    "blanc_casse": { base:"#f3f0e9", shadow:"#d8cfc0", trim:"#c7bba6", roof:"#5a4f46" },
+    "ton_pierre":  { base:"#dcc9a8", shadow:"#c5b08d", trim:"#ad9672", roof:"#5c4c40" },
+    "saumon":      { base:"#e8b2a0", shadow:"#d39c8a", trim:"#bf8b7b", roof:"#5e4a42" }
+  },
+  metal: {
+    "anthracite": { fill:"#2e3236", stroke:"#17191b" },
+    "blanc":      { fill:"#f2f2f2", stroke:"#b1b1b1" },
+    "noir":       { fill:"#151515", stroke:"#000000" },
+    "gris_clair": { fill:"#b6bbc1", stroke:"#7d838b" },
+    "marron":     { fill:"#5a3c2c", stroke:"#2f1e16" },
+    "vert":       { fill:"#2f5a3b", stroke:"#14301f" }
+  },
+  dims: { line:"#2b2b2b", text:"#111" }
+};
+
+const $ = (id) => document.getElementById(id);
+const items = [];
+let gradientFor = null;
+
+/** =========================
+ *  UI
+ *  ========================= */
+function syncUI(){
+  const t = $('type').value;
+  const show = (id, yes) => { $(id).style.display = yes ? '' : 'none'; };
+
+  show('houseColorLabel', $('backgroundStyle').value === 'house');
+  show('wallHLabel', t === 'fence');
+  show('postSpacingLabel', t === 'fence');
+  show('gateKindLabel', t === 'gate');
+
+  show('slatsLabel', t !== 'pillar');
+  show('slatThicknessLabel', t !== 'pillar');
+  show('metalColorLabel', t !== 'pillar');
+  show('handleSideLabel', (t === 'wicket' || t === 'gate'));
+  show('masonryColorLabel', (t === 'pillar' || t === 'fence'));
+
+  // Defaults
+  if (t === 'pillar') { $('w').value = 30; $('h').value = 180; }
+  if (t === 'wicket') { $('w').value = 100; $('h').value = 170; }
+  if (t === 'gate')   { $('w').value = 305; $('h').value = 170; }
+  if (t === 'fence')  { $('w').value = 125; $('h').value = 170; $('wallH').value = 90; $('postSpacingM').value = 1.5; }
+}
+$('type').addEventListener('change', syncUI);
+$('backgroundStyle').addEventListener('change', syncUI);
+syncUI();
+
+function labelForType(t){
+  return ({
+    pillar: "Pilier",
+    wicket: "Portillon",
+    fence: "Clôture sur muret",
+    gate: "Portail"
+  })[t] || t;
+}
+
+function updateSummary(){
+  const totalW = items.reduce((s,it)=>s+it.w,0);
+  $('summaryPill').textContent = `${items.length} élément${items.length>1?'s':''} • ${totalW} cm`;
+}
+
+function addItem(){
+  const type = $('type').value;
+  const w = Math.max(1, Number($('w').value || 0));
+  const h = Math.max(1, Number($('h').value || 0));
+
+  const it = {
+    type, w, h,
+    slats: $('slats').value,
+    slatThicknessCm: Math.max(4, Number($('slatThicknessCm').value || 12)),
+    masonryColor: $('masonryColor').value,
+    metalColor: $('metalColor').value,
+    gateKind: $('gateKind').value,
+    handleSide: $('handleSide').value
+  };
+
+  if (type === 'fence') {
+    it.wallH = Math.max(0, Number($('wallH').value || 0));
+    it.postSpacingM = Math.max(0.5, Number($('postSpacingM').value || 2));
+    delete it.handleSide;
+  }
+  if (type === 'pillar') {
+    delete it.slats; delete it.slatThicknessCm; delete it.metalColor;
+    delete it.gateKind; delete it.handleSide;
+  }
+  if (type === 'wicket') {
+    delete it.gateKind;
+  }
+
+  items.push(it);
+  renderList();
+  renderSvg();
+}
+
+function renderList(){
+  const ol = $('list');
+  ol.innerHTML = '';
+  items.forEach((it, idx) => {
+    const li = document.createElement('li');
+    let extra = '';
+    if (it.type === 'fence') extra = ` (muret ${it.wallH} cm, poteaux / ${it.postSpacingM} m, lames ${it.slats}, ${it.slatThicknessCm} cm)`;
+    if (it.type === 'gate')  extra = ` (${it.gateKind === 'sliding' ? 'coulissant' : 'battant'}, lames ${it.slats}, ${it.slatThicknessCm} cm, poignée ${it.handleSide === 'right' ? 'droite' : 'gauche'})`;
+    if (it.type === 'wicket')extra = ` (lames ${it.slats}, ${it.slatThicknessCm} cm, poignée ${it.handleSide === 'right' ? 'droite' : 'gauche'})`;
+    if (it.type === 'pillar')extra = ` (${it.masonryColor.replace('_',' ')})`;
+
+    li.textContent = `${labelForType(it.type)} — ${it.w}×${it.h} cm${extra}`;
+    li.onclick = () => { items.splice(idx, 1); renderList(); renderSvg(); };
+    ol.appendChild(li);
+  });
+  updateSummary();
+}
+
+$('add').addEventListener('click', addItem);
+$('reset').addEventListener('click', () => { items.length = 0; renderList(); renderSvg(); });
+$('backgroundStyle').addEventListener('change', renderSvg);
+$('houseColor').addEventListener('change', renderSvg);
+
+/** =========================
+ *  SVG helpers
+ *  ========================= */
+const SVG_NS = 'http://www.w3.org/2000/svg';
+function el(name, attrs={}){
+  const n = document.createElementNS(SVG_NS, name);
+  for (const [k,v] of Object.entries(attrs)) n.setAttribute(k, String(v));
+  return n;
+}
+function add(svg, node){ svg.appendChild(node); return node; }
+function addRect(svg, x,y,w,h, fill, stroke="none", rx=0, sw=1, extraAttrs=null){
+  const attrs = { x, y, width:w, height:h, fill, stroke, 'stroke-width':sw, rx, ry:rx };
+  const r = el('rect', attrs);
+  if (extraAttrs) for (const [k,v] of Object.entries(extraAttrs)) r.setAttribute(k, String(v));
+  return add(svg, r);
+}
+function addLine(svg, x1,y1,x2,y2, stroke, sw=1, dash=null, extraAttrs=null){
+  const attrs = { x1,y1,x2,y2, stroke, 'stroke-width':sw };
+  if (dash) attrs['stroke-dasharray'] = dash;
+  const l = el('line', attrs);
+  if (extraAttrs) for (const [k,v] of Object.entries(extraAttrs)) l.setAttribute(k, String(v));
+  return add(svg, l);
+}
+function addText(svg, x,y, text, anchor='start', size=12, fill="#111", outline=false){
+  const attrs = { x, y, 'font-size':size, fill, 'text-anchor':anchor, 'font-family':'Arial, sans-serif' };
+  if (outline){
+    attrs['stroke'] = 'rgba(255,255,255,0.9)';
+    attrs['stroke-width'] = '4';
+    attrs['paint-order'] = 'stroke';
+  }
+  const t = add(svg, el('text', attrs));
+  t.textContent = text;
+  return t;
+}
+function darken(hex, amt=0.14){
+  const c = hex.replace('#','');
+  const r = parseInt(c.slice(0,2),16), g = parseInt(c.slice(2,4),16), b = parseInt(c.slice(4,6),16);
+  const f = (v) => Math.max(0, Math.min(255, Math.round(v * (1-amt))));
+  const to = (v) => v.toString(16).padStart(2,'0');
+  return `#${to(f(r))}${to(f(g))}${to(f(b))}`;
+}
+function lighten(hex, amt=0.10){
+  const c = hex.replace('#','');
+  const r = parseInt(c.slice(0,2),16), g = parseInt(c.slice(2,4),16), b = parseInt(c.slice(4,6),16);
+  const f = (v) => Math.max(0, Math.min(255, Math.round(v + (255-v)*amt)));
+  const to = (v) => v.toString(16).padStart(2,'0');
+  return `#${to(f(r))}${to(f(g))}${to(f(b))}`;
+}
+
+function createGradient(svg, id, topColor, midColor, bottomColor){
+  const grad = el('linearGradient', { id, x1:0, y1:0, x2:0, y2:1 });
+  grad.appendChild(el('stop', { offset:'0%', 'stop-color': topColor }));
+  grad.appendChild(el('stop', { offset:'55%', 'stop-color': midColor }));
+  grad.appendChild(el('stop', { offset:'100%', 'stop-color': bottomColor }));
+  svg.querySelector('defs').appendChild(grad);
+}
+
+function drawHouseBackground(svg, W, H, groundY, palette, gradientForRef){
+  const houseBaseY = groundY - 220;
+  const houseX = 190;
+  const houseW = 520;
+  const houseH = 220;
+
+  const sky = gradientForRef('#dbe8f5', 'sky');
+  addRect(svg, 0, 0, W, groundY, sky, 'none', 0, 0);
+  addRect(svg, 0, groundY, W, H - groundY, '#e3ddd2', 'none', 0, 0);
+  addLine(svg, 0, groundY, W, groundY, '#2b2b2b', 2);
+
+  // Maison
+  const wallFill = gradientForRef(palette.base, 'houseWall');
+  addRect(svg, houseX, houseBaseY, houseW, houseH, wallFill, palette.trim, 8, 0.9);
+  addRect(svg, houseX + 12, houseBaseY + 14, houseW - 24, houseH * 0.45, "rgba(255,255,255,0.10)", "none", 6, 0);
+
+  // Toit
+  const roof = el('polygon', {
+    points: `${houseX - 30},${houseBaseY} ${houseX + houseW/2},${houseBaseY - 90} ${houseX + houseW + 30},${houseBaseY}`,
+    fill: gradientForRef(palette.roof, 'houseRoof'),
+    stroke: darken(palette.roof, 0.25),
+    'stroke-width': 1
+  });
+  add(svg, roof);
+
+  // Ombres
+  addRect(svg, houseX + houseW * 0.62, houseBaseY, houseW * 0.38, houseH, "rgba(0,0,0,0.06)", "none", 8, 0);
+  addRect(svg, houseX - 22, houseBaseY + houseH - 12, houseW + 44, 12, "rgba(0,0,0,0.08)", "none", 6, 0);
+
+  // Fenêtres
+  const windowFill = "#e8f1ff";
+  const windowStroke = "#9fb4c7";
+  const windowW = 70;
+  const windowH = 84;
+  addRect(svg, houseX + 60, houseBaseY + 50, windowW, windowH, windowFill, windowStroke, 6, 0.9);
+  addRect(svg, houseX + 60 + windowW + 30, houseBaseY + 50, windowW, windowH, windowFill, windowStroke, 6, 0.9);
+  addRect(svg, houseX + houseW - 140, houseBaseY + 70, 80, 100, windowFill, windowStroke, 6, 0.9);
+  addLine(svg, houseX + 60 + windowW/2, houseBaseY + 50, houseX + 60 + windowW/2, houseBaseY + 50 + windowH, "#9fb4c7", 1);
+  addLine(svg, houseX + 60, houseBaseY + 50 + windowH/2, houseX + 60 + windowW, houseBaseY + 50 + windowH/2, "#9fb4c7", 1);
+
+  // Porte
+  addRect(svg, houseX + houseW * 0.46, houseBaseY + 110, 80, 110, gradientForRef(palette.shadow, 'door'), darken(palette.shadow, 0.15), 6, 0.9);
+  addRect(svg, houseX + houseW * 0.48, houseBaseY + 122, 56, 92, "rgba(255,255,255,0.08)", "none", 4, 0);
+  add(svg, el('circle', { cx: houseX + houseW * 0.52, cy: houseBaseY + 165, r: 4, fill: "#e2e2e2" }));
+
+  // Terrasse et végétation
+  addRect(svg, houseX - 40, groundY - 18, houseW + 80, 18, "#c9c1b3", "#a89f90", 6, 0.8);
+  addRect(svg, houseX - 120, groundY - 58, 90, 58, gradientForRef("#7aa878", "bush"), "#4f6d52", 10, 0.8);
+  addRect(svg, houseX + houseW + 30, groundY - 70, 110, 70, gradientForRef("#78a07a", "bush2"), "#4f6d52", 10, 0.8);
+}
+
+/** =========================
+ *  Cotes (plus lisibles)
+ *  ========================= */
+function drawDimH(svg, x1, x2, y, label){
+  addLine(svg, x1, y, x2, y, COLORS.dims.line, 1.1);
+  const a = 6;
+  addLine(svg, x1, y, x1+a, y-a, COLORS.dims.line, 1.1);
+  addLine(svg, x1, y, x1+a, y+a, COLORS.dims.line, 1.1);
+  addLine(svg, x2, y, x2-a, y-a, COLORS.dims.line, 1.1);
+  addLine(svg, x2, y, x2-a, y+a, COLORS.dims.line, 1.1);
+  addText(svg, (x1+x2)/2, y-6, label, 'middle', 12, COLORS.dims.text, true);
+}
+function drawDimV(svg, x, y1, y2, label){
+  addLine(svg, x, y1, x, y2, COLORS.dims.line, 1.1);
+  const a = 6;
+  addLine(svg, x, y1, x-a, y1+a, COLORS.dims.line, 1.1);
+  addLine(svg, x, y1, x+a, y1+a, COLORS.dims.line, 1.1);
+  addLine(svg, x, y2, x-a, y2-a, COLORS.dims.line, 1.1);
+  addLine(svg, x, y2, x+a, y2-a, COLORS.dims.line, 1.1);
+
+  const tx = add(svg, el('text', {
+    x: x-10, y: (y1+y2)/2,
+    'font-size': 12,
+    fill: COLORS.dims.text,
+    'text-anchor': 'middle',
+    'font-family':'Arial, sans-serif',
+    stroke:'rgba(255,255,255,0.9)',
+    'stroke-width':'4',
+    'paint-order':'stroke',
+    transform: `rotate(-90 ${x-10} ${(y1+y2)/2})`
+  }));
+  tx.textContent = label;
+}
+
+/** =========================
+ *  Dessins (plus réalistes)
+ *  ========================= */
+function drawSoftShadow(svg, x, y, w, h, rx=6, opacity=0.18){
+  addRect(svg, x+6, y+8, w, h, `rgba(0,0,0,${opacity})`, "none", rx, 0);
+}
+
+function drawPillar(svg, x, groundY, wpx, hpx, masonryKey){
+  const m = COLORS.masonry[masonryKey] || COLORS.masonry.blanc_casse;
+  const fill = gradientFor(m.base, 'masonry');
+
+  drawSoftShadow(svg, x, groundY - hpx, wpx, hpx, 6, 0.14);
+  addRect(svg, x, groundY - hpx, wpx, hpx, fill, m.stroke, 5, 0.9);
+
+  const capH = Math.min(10, hpx * 0.07);
+  addRect(svg, x-1, groundY - hpx - capH, wpx+2, capH, gradientFor(m.cap, 'cap'), m.stroke, 5, 0.9);
+  addRect(svg, x+1, groundY - hpx + 2, wpx-2, hpx * 0.18, "rgba(255,255,255,0.12)", "none", 4, 0);
+
+  // petite ombre au sol
+  addRect(svg, x+2, groundY+2, wpx-4, 3, "rgba(0,0,0,0.10)", "none", 2, 0);
+}
+
+function drawHandle(svg, x, y, side){
+  // poignée plus “premium”
+  const plateW = 26, plateH = 12;
+  const barW = 30, barH = 6;
+
+  const px = side === 'right' ? x - plateW : x;
+  const bx = side === 'right' ? x - barW - 7 : x + 7;
+
+  addRect(svg, px, y - plateH/2, plateW, plateH, "url(#metalHandlePlate)", "#7a7f86", 4, 0.9);
+  addRect(svg, bx, y - barH/2, barW, barH, "url(#metalHandleBar)", "#7a7f86", 4, 0.9);
+  // petit reflet
+  addRect(svg, bx+2, y - barH/2 + 1, barW-4, 1.5, "rgba(255,255,255,0.55)", "none", 2, 0);
+}
+
+function drawSlats(svg, x, yTop, w, h, orientation, metalFill, slatThicknessCm, sx, sy){
+  const inset = 10;
+  const ix = x + inset;
+  const iy = yTop + inset;
+  const iw = Math.max(0, w - inset*2);
+  const ih = Math.max(0, h - inset*2);
+  if (iw <= 0 || ih <= 0) return;
+
+  const gapCm = 3;
+  const edge = darken(metalFill,.32);
+  const slatFill = gradientFor(lighten(metalFill,.03), 'slat');
+
+  if (orientation === 'vertical'){
+    const slatWpx = Math.max(7, slatThicknessCm * sx);
+    const stepPx  = (slatThicknessCm + gapCm) * sx;
+    const n = Math.min(500, Math.floor(iw / stepPx));
+    for (let i=0;i<=n;i++){
+      const sxp = ix + i*stepPx;
+      if (sxp + slatWpx <= ix + iw + 0.5){
+        addRect(svg, sxp, iy, slatWpx, ih, slatFill, edge, 3, 0.9);
+        // petit reflet vertical
+        addRect(svg, sxp+2, iy+2, Math.max(0,slatWpx-4), 2, "rgba(255,255,255,0.16)", "none", 2, 0);
+      }
+    }
+  } else {
+    const slatHpx = Math.max(7, slatThicknessCm * sy);
+    const stepPx  = (slatThicknessCm + gapCm) * sy;
+    const n = Math.min(500, Math.floor(ih / stepPx));
+    for (let i=0;i<=n;i++){
+      const syp = iy + i*stepPx;
+      if (syp + slatHpx <= iy + ih + 0.5){
+        addRect(svg, ix, syp, iw, slatHpx, slatFill, edge, 3, 0.9);
+        // reflet horizontal
+        addRect(svg, ix+2, syp+2, Math.max(0,iw-4), 2, "rgba(255,255,255,0.14)", "none", 2, 0);
+      }
+    }
+  }
+}
+
+function drawWicket(svg, x, groundY, wpx, hpx, metalKey, slats, slatThicknessCm, handleSide, sx, sy){
+  const m = COLORS.metal[metalKey] || COLORS.metal.anthracite;
+  const fill = gradientFor(m.fill, 'metal');
+
+  drawSoftShadow(svg, x, groundY - hpx, wpx, hpx, 8, 0.18);
+
+  addRect(svg, x, groundY - hpx, wpx, hpx, fill, darken(m.fill,.28), 8, 0.9);
+  addRect(svg, x+2, groundY - hpx+2, wpx-4, hpx-4, "none", darken(m.stroke,0.12), 7, 0.9);
+  addRect(svg, x+3, groundY - hpx+3, wpx-6, hpx*0.18, "rgba(255,255,255,0.10)", "none", 6, 0);
+
+  drawSlats(svg, x, groundY - hpx, wpx, hpx, slats, m.fill, slatThicknessCm, sx, sy);
+
+  const handleY = groundY - hpx*0.52;
+  if (handleSide === 'right'){
+    drawHandle(svg, x + wpx*0.92, handleY, 'right');
+  } else {
+    drawHandle(svg, x + wpx*0.08, handleY, 'left');
+  }
+}
+
+function drawGateSliding(svg, x, groundY, wpx, hpx, metalKey, slats, slatThicknessCm, handleSide, sx, sy){
+  const m = COLORS.metal[metalKey] || COLORS.metal.anthracite;
+  const fill = gradientFor(m.fill, 'metal');
+
+  drawSoftShadow(svg, x, groundY - hpx, wpx, hpx, 10, 0.18);
+
+  addRect(svg, x, groundY - hpx, wpx, hpx, fill, darken(m.fill,.28), 10, 0.9);
+  addRect(svg, x+2, groundY - hpx+2, wpx-4, hpx-4, "none", darken(m.stroke,0.12), 9, 0.9);
+  addRect(svg, x+3, groundY - hpx+3, wpx-6, hpx*0.18, "rgba(255,255,255,0.08)", "none", 8, 0);
+
+  drawSlats(svg, x, groundY - hpx, wpx, hpx, slats, m.fill, slatThicknessCm, sx, sy);
+
+  // rail plus discret
+  addLine(svg, x, groundY+7, x+wpx, groundY+7, "#3c3c3c", 3);
+  add(svg, el('circle', { cx: x+wpx*0.25, cy: groundY+7, r: 5, fill:"#6f6f6f" }));
+  add(svg, el('circle', { cx: x+wpx*0.75, cy: groundY+7, r: 5, fill:"#6f6f6f" }));
+
+  const handleY = groundY - hpx*0.52;
+  if (handleSide === 'right'){
+    drawHandle(svg, x + wpx*0.92, handleY, 'right');
+  } else {
+    drawHandle(svg, x + wpx*0.08, handleY, 'left');
+  }
+}
+
+function drawGateSwing(svg, x, groundY, wpx, hpx, metalKey, slats, slatThicknessCm, handleSide, sx, sy){
+  const m = COLORS.metal[metalKey] || COLORS.metal.anthracite;
+  const fill = gradientFor(m.fill, 'metal');
+  const leafW = wpx / 2;
+
+  drawSoftShadow(svg, x, groundY - hpx, wpx, hpx, 10, 0.18);
+
+  // gauche
+  addRect(svg, x, groundY - hpx, leafW, hpx, fill, darken(m.fill,.28), 10, 0.9);
+  addRect(svg, x+2, groundY - hpx+2, leafW-4, hpx-4, "none", darken(m.stroke,0.12), 9, 0.9);
+  addRect(svg, x+3, groundY - hpx+3, leafW-6, hpx*0.18, "rgba(255,255,255,0.08)", "none", 8, 0);
+  drawSlats(svg, x, groundY - hpx, leafW, hpx, slats, m.fill, slatThicknessCm, sx, sy);
+
+  // droit
+  const xr = x + leafW;
+  addRect(svg, xr, groundY - hpx, leafW, hpx, fill, darken(m.fill,.28), 10, 0.9);
+  addRect(svg, xr+2, groundY - hpx+2, leafW-4, hpx-4, "none", darken(m.stroke,0.12), 9, 0.9);
+  addRect(svg, xr+3, groundY - hpx+3, leafW-6, hpx*0.18, "rgba(255,255,255,0.08)", "none", 8, 0);
+  drawSlats(svg, xr, groundY - hpx, leafW, hpx, slats, m.fill, slatThicknessCm, sx, sy);
+
+  // joint central très léger
+  addLine(svg, xr, groundY - hpx + 4, xr, groundY - 4, "rgba(0,0,0,0.35)", 1);
+
+  const handleY = groundY - hpx*0.52;
+  if (handleSide === 'right'){
+    drawHandle(svg, xr + leafW*0.88, handleY, 'right');
+  } else {
+    drawHandle(svg, x + leafW*0.12, handleY, 'left');
+  }
+}
+
+function drawFenceOnWall(svg, x, groundY, wpx, hpx, wallHpx, masonryKey, metalKey, slats, slatThicknessCm, postSpacingM, sx, sy){
+  const masonry = COLORS.masonry[masonryKey] || COLORS.masonry.blanc_casse;
+  const metal = COLORS.metal[metalKey] || COLORS.metal.anthracite;
+
+  // muret
+  drawSoftShadow(svg, x, groundY - wallHpx, wpx, wallHpx, 6, 0.10);
+  addRect(svg, x, groundY - wallHpx, wpx, wallHpx, gradientFor(masonry.base, 'masonry'), masonry.stroke, 6, 0.9);
+  const capH = Math.min(9, wallHpx*0.08);
+  addRect(svg, x-1, groundY - wallHpx - capH, wpx+2, capH, gradientFor(masonry.cap, 'cap'), masonry.stroke, 6, 0.9);
+  addRect(svg, x+2, groundY - wallHpx + 2, wpx-4, wallHpx*0.18, "rgba(255,255,255,0.10)", "none", 5, 0);
+
+  // clôture au-dessus
+  const fenceTopY = groundY - hpx;
+  const fenceH = Math.max(0, hpx - wallHpx);
+  if (fenceH <= 1) return;
+
+  drawSoftShadow(svg, x, fenceTopY, wpx, fenceH, 8, 0.14);
+
+  addRect(svg, x, fenceTopY, wpx, fenceH, gradientFor(metal.fill, 'metal'), darken(metal.fill,.28), 8, 0.9);
+  drawSlats(svg, x, fenceTopY, wpx, fenceH, slats, metal.fill, slatThicknessCm, sx, sy);
+
+  // poteaux
+  const spacingCm = Math.max(50, postSpacingM * 100);
+  const spacingPx = spacingCm * sx;
+  const postWpx = Math.max(10, 0.04*wpx);
+  const postFill = gradientFor(lighten(metal.fill,.04), 'post');
+  const postStroke = darken(metal.stroke,0.05);
+
+  function postAt(px){
+    addRect(svg, px, fenceTopY, postWpx, fenceH, postFill, postStroke, 4, 0.9);
+    addRect(svg, px-1, fenceTopY-7, postWpx+2, 7, gradientFor(darken(metal.fill,0.08), 'postCap'), postStroke, 4, 0.9);
+  }
+
+  postAt(x);
+  for (let px = x + spacingPx; px < x + wpx - postWpx - 0.5; px += spacingPx){
+    postAt(px);
+  }
+  postAt(x + wpx - postWpx);
+}
+
+/** =========================
+ *  Render principal
+ *  ========================= */
+function renderSvg(){
+  const svg = $('plan');
+  svg.innerHTML = '';
+  const defs = add(svg, el('defs'));
+  const gradientCache = new Map();
+
+  const metalHandlePlate = el('linearGradient', { id: 'metalHandlePlate', x1:0, y1:0, x2:0, y2:1 });
+  metalHandlePlate.appendChild(el('stop', { offset:'0%', 'stop-color':'#f5f7f9' }));
+  metalHandlePlate.appendChild(el('stop', { offset:'100%', 'stop-color':'#cbd0d6' }));
+  defs.appendChild(metalHandlePlate);
+
+  const metalHandleBar = el('linearGradient', { id: 'metalHandleBar', x1:0, y1:0, x2:0, y2:1 });
+  metalHandleBar.appendChild(el('stop', { offset:'0%', 'stop-color':'#ffffff' }));
+  metalHandleBar.appendChild(el('stop', { offset:'100%', 'stop-color':'#d6dbe1' }));
+  defs.appendChild(metalHandleBar);
+
+  gradientFor = (baseColor, prefix) => {
+    const id = `${prefix}-${baseColor.replace('#','')}`;
+    if (!gradientCache.has(id)){
+      createGradient(svg, id, lighten(baseColor, 0.16), baseColor, darken(baseColor, 0.12));
+      gradientCache.set(id, true);
+    }
+    return `url(#${id})`;
+  };
+
+  const W = 1500;
+  const H = 560;
+
+  const paddingL = 78;
+  const paddingR = 30;
+  const paddingTop = 24;
+  const paddingBottom = 110;
+  const groundY = H - paddingBottom;
+
+  const backgroundStyle = $('backgroundStyle').value;
+  const houseColor = $('houseColor').value;
+
+  if (backgroundStyle === 'house'){
+    const palette = COLORS.house[houseColor] || COLORS.house.blanc_casse;
+    drawHouseBackground(svg, W, H, groundY, palette, gradientFor);
+  } else {
+    // Fond neutre + léger “grain”
+    addRect(svg, 0, 0, W, H, '#eaf3ff', 'none', 0, 0);
+    addRect(svg, 0, 0, W, groundY, 'rgba(255,255,255,0.18)', 'none', 0, 0);
+    addRect(svg, 0, groundY, W, H-groundY, '#e7e1d6', 'none', 0, 0);
+    addLine(svg, 0, groundY, W, groundY, '#2b2b2b', 2);
+
+    // petit grain sur le sol
+    const grain = add(svg, el('g', { opacity: 0.14 }));
+    for (let i=0;i<260;i++){
+      const cx = (i*41) % W;
+      const cy = groundY + ((i*67) % (H-groundY));
+      add(grain, el('circle', { cx, cy, r: (i%3)+0.6, fill: (i%2===0) ? "#b8afa2" : "#a79d90" }));
+    }
+  }
+
+  if (items.length === 0){
+    addText(svg, W/2, H/2, "Ajoute des éléments pour voir la façade.", "middle", 16, "#1a1a1a", true);
+    updateSummary();
+    return;
+  }
+
+  const totalWcm = items.reduce((s,it)=>s+it.w,0) || 1;
+  const maxHcm = Math.max(...items.map(it => it.h), 200);
+
+  const usableW = W - paddingL - paddingR;
+  const usableH = groundY - paddingTop;
+
+  const sx = usableW / totalWcm;
+  const sy = usableH / maxHcm;
+
+  // Entête
+  addText(svg, paddingL, 18, `Échelle automatique`, "start", 12, "#1a1a1a", true);
+  addText(svg, paddingL, 34, `Largeur totale : ${totalWcm} cm`, "start", 12, "#1a1a1a", true);
+  addText(svg, paddingL, 50, `Hauteur max : ${maxHcm} cm`, "start", 12, "#1a1a1a", true);
+
+  let x = paddingL;
+
+  items.forEach((it) => {
+    const wpx = it.w * sx;
+    const hpx = it.h * sy;
+    const topY = groundY - hpx;
+
+    if (it.type === 'pillar'){
+      drawPillar(svg, x, groundY, wpx, hpx, it.masonryColor);
+      addText(svg, x + wpx/2, topY - 10, `Pilier`, "middle", 12, "#111", true);
+    }
+
+    if (it.type === 'wicket'){
+      drawWicket(svg, x, groundY, wpx, hpx, it.metalColor, it.slats, it.slatThicknessCm, it.handleSide, sx, sy);
+      addText(svg, x + wpx/2, topY - 10, `Portillon`, "middle", 12, "#111", true);
+    }
+
+    if (it.type === 'gate'){
+      if (it.gateKind === 'swing'){
+        drawGateSwing(svg, x, groundY, wpx, hpx, it.metalColor, it.slats, it.slatThicknessCm, it.handleSide, sx, sy);
+        addText(svg, x + wpx/2, topY - 10, `Portail battant`, "middle", 12, "#111", true);
+      } else {
+        drawGateSliding(svg, x, groundY, wpx, hpx, it.metalColor, it.slats, it.slatThicknessCm, it.handleSide, sx, sy);
+        addText(svg, x + wpx/2, topY - 10, `Portail coulissant`, "middle", 12, "#111", true);
+      }
+    }
+
+    if (it.type === 'fence'){
+      const wallHcm = Math.max(0, it.wallH ?? 0);
+      const wallHpx = wallHcm * sy;
+      drawFenceOnWall(svg, x, groundY, wpx, hpx, wallHpx, it.masonryColor, it.metalColor, it.slats, it.slatThicknessCm, it.postSpacingM, sx, sy);
+      addText(svg, x + wpx/2, topY - 10, `Clôture sur muret`, "middle", 12, "#111", true);
+    }
+
+    // Cotes largeur (plus propres)
+    const dimY = groundY + 44;
+    addLine(svg, x, groundY, x, dimY, "#333", 1, "3,3");
+    addLine(svg, x+wpx, groundY, x+wpx, dimY, "#333", 1, "3,3");
+    drawDimH(svg, x, x+wpx, dimY, `${it.w} cm`);
+
+    // Cotes hauteur
+    const dimX = x - 26;
+    addLine(svg, dimX, groundY, x, groundY, "#333", 1, "3,3");
+    addLine(svg, dimX, topY, x, topY, "#333", 1, "3,3");
+    drawDimV(svg, dimX, topY, groundY, `${it.h} cm`);
+
+    // Détail muret/clôture
+    if (it.type === 'fence'){
+      const wallHcm = Math.max(0, it.wallH ?? 0);
+      const wallHpx = wallHcm * sy;
+      const fenceHcm = Math.max(0, it.h - wallHcm);
+
+      const wallTopY = groundY - wallHpx;
+
+      const dx2 = x - 48;
+      drawDimV(svg, dx2, wallTopY, groundY, `muret ${wallHcm} cm`);
+
+      const dx3 = x - 70;
+      drawDimV(svg, dx3, topY, wallTopY, `clôture ${fenceHcm} cm`);
+    }
+
+    x += wpx;
+  });
+
+  // Cote totale
+  const totalY = H - 26;
+  const x1 = paddingL;
+  const x2 = paddingL + totalWcm*sx;
+  addLine(svg, x1, groundY, x1, totalY, "#333", 1, "3,3");
+  addLine(svg, x2, groundY, x2, totalY, "#333", 1, "3,3");
+  drawDimH(svg, x1, x2, totalY, `TOTAL = ${totalWcm} cm`);
+
+  // Repère 1 m
+  const rulerCm = 100;
+  const rulerPx = rulerCm * sx;
+  if (rulerPx > 100 && rulerPx < 800){
+    const rx = W - paddingR - rulerPx;
+    const ry = 16;
+    addRect(svg, rx, ry, rulerPx, 10, "#fff", "#333", 2, 1);
+    for (let i=0;i<=10;i++){
+      const tx = rx + (rulerPx*i/10);
+      const hh = (i%5===0) ? 10 : 6;
+      addLine(svg, tx, ry, tx, ry+hh, "#333", 1);
+    }
+    addText(svg, rx + rulerPx/2, ry-2, "repère 1 m", "middle", 12, "#333", true);
+  }
+
+  updateSummary();
+}
+
+/** =========================
+ *  PDF
+ *  ========================= */
+function openPrintWindow(){
+  const svg = document.getElementById('plan');
+  if (!svg) return;
+
+  const clone = svg.cloneNode(true);
+  clone.setAttribute('width', '1500');
+  clone.setAttribute('height', '560');
+
+  const serializer = new XMLSerializer();
+  const svgString = serializer.serializeToString(clone);
+
+  const html = `
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Plan façade</title>
+  <style>
+    @page { size: landscape; margin: 10mm; }
+    body { margin: 0; font-family: Arial, sans-serif; }
+    svg { width: 100%; height: auto; }
+  </style>
+</head>
+<body>
+  ${svgString}
+  <script>
+    window.onload = () => window.print();
+  <\/script>
+</body>
+</html>`;
+
+  const win = window.open('', '_blank');
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+}
+document.getElementById('downloadPdf').addEventListener('click', openPrintWindow);
+document.getElementById('downloadPdfTop').addEventListener('click', openPrintWindow);
+
+// init
+renderList();
+renderSvg();
+</script>
+</body>
+</html>
